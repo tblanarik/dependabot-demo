@@ -18,7 +18,7 @@ jobs:
 
             summary=$(echo $alert | jq -r '.security_advisory.summary') 
             description=$(echo $alert | jq -r '.security_advisory.description')
-            severity=$(echo $alert | jq -r '.security_advisory.severity')
+            severity=$(echo $alert | jq -r '.security_advisory.severity' | tr '[:lower:]' '[:upper:]')
             url=$(echo $alert | jq -r '.url')
 
             issue_title="[$severity] $summary"
