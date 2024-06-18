@@ -23,5 +23,11 @@ jobs:
 
             issue_title="[$severity] $summary"
             issue_body="#Dependabot Vulnerability Alert\n\n##Description\n$description\n\n$url"
-            echo -e "$issue_body" | gh issue create --title "$issue_title" --body-file -
+            
+            existing_issues=$(gh issue list --search "$issue_title in:title")
+            if [ -z "$existing_issues" ]; then
+              echo -e "$issue_body" | gh issue create --title "$issue_title" -l dependabot-vuln --body-file -
+            else
+                echo "Issues already exists for $issue_title"
+            fi
           done
