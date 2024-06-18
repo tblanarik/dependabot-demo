@@ -9,11 +9,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Set up GitHub CLI
-        uses: actions/setup-go@v2
-        with:
-          go-version: '^1.15.8'
-      
       - name: Fetch Dependabot alerts
         env:
           GH_TOKEN: ${{ secrets.TB_PAT }}
@@ -23,10 +18,10 @@ jobs:
 
             summary=$(echo $alert | jq -r '.security_advisory.summary') 
             description=$(echo $alert | jq -r '.security_advisory.description')
-            severity=^^$(echo $alert | jq -r '.security_advisory.severity')
+            severity=$(echo $alert | jq -r '.security_advisory.severity')
             url=$(echo $alert | jq -r '.url')
 
             issue_title="[$severity] $summary"
             issue_body="Dependabot Vulnerability Alert.$'\n\n'$description$'\n\n'$url"
-            gh issue create --title "$issue_title" --body "$issue_body"
+            echo -e "$issue_body" | gh issue create --title "$issue_title" --body-file -
           done
