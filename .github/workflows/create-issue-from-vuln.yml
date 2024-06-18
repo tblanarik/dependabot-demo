@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Set up GitHub CLI
         uses: actions/setup-go@v2
@@ -21,10 +21,10 @@ jobs:
           alerts=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/tblanarik/dependabot-demo/dependabot/alerts)
           echo "$alerts" | jq -c '.[]' | while read -r alert; do
 
-            summary=(echo $alert | jq -r '.security_advisory.summary') 
-            description=(echo $alert | jq -r '.security_advisory.description')
-            severity=(echo $alert | jq -r '.security_advisory.severity')
-            url=(echo $alert | jq -r '.url')
+            summary=$(echo $alert | jq -r '.security_advisory.summary') 
+            description=$(echo $alert | jq -r '.security_advisory.description')
+            severity=$(echo $alert | jq -r '.security_advisory.severity')
+            url=$(echo $alert | jq -r '.url')
 
             issue_title="[$severity] $summary"
             issue_body="Dependabot Vulnerability Alert.\n\n$description\n\n$url"
