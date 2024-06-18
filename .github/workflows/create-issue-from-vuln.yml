@@ -23,10 +23,10 @@ jobs:
 
             summary=$(echo $alert | jq -r '.security_advisory.summary') 
             description=$(echo $alert | jq -r '.security_advisory.description')
-            severity=$(echo $alert | jq -r '.security_advisory.severity')
+            severity=^^$(echo $alert | jq -r '.security_advisory.severity')
             url=$(echo $alert | jq -r '.url')
 
             issue_title="[$severity] $summary"
-            issue_body="Dependabot Vulnerability Alert.\n\n$description\n\n$url"
+            issue_body="Dependabot Vulnerability Alert.$'\n\n'$description$'\n\n'$url"
             gh issue create --title "$issue_title" --body "$issue_body"
           done
