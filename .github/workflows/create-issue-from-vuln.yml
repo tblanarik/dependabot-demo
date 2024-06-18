@@ -22,13 +22,13 @@ jobs:
           echo "$alerts" | jq -c '.[]' | while read -r row; do
             echo "$row"
             # If you want to uncomment and use the following line, it should work now
-            echo $(echo "$row" | jq -r '.securityVulnerability.package.name')
+            echo $(echo "$row" | jq -r '.security_vulnerability.package.name')
           done
 
 
           # echo $alerts
           # echo "$alerts" | jq -c '.[]' | while read -r alert; do
-          #  package_name=$(echo $alert | jq -r '.securityVulnerability.package.name')
+          #  package_name=$(echo $alert | jq -r '.security_vulnerability.package.name')
           #  vulnerable_version=$(echo $alert | jq -r '.securityVulnerability.vulnerableVersionRange')
           #  recommendation=$(echo $alert | jq -r '.securityVulnerability.advisory.summary')
           #  
