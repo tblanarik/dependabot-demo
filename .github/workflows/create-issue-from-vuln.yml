@@ -19,7 +19,10 @@ jobs:
           GH_TOKEN: ${{ secrets.TB_PAT }}
         run: |
           alerts=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/tblanarik/dependabot-demo/dependabot/alerts)
-          echo $alerts
+          for row in $(echo alerts | jq -r '.[]'); do
+            echo $(echo $row | jq -r '.securityVulnerability.package.name')
+          done
+          # echo $alerts
           # echo "$alerts" | jq -c '.[]' | while read -r alert; do
           #  package_name=$(echo $alert | jq -r '.securityVulnerability.package.name')
           #  vulnerable_version=$(echo $alert | jq -r '.securityVulnerability.vulnerableVersionRange')
