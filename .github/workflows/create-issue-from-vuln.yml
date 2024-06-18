@@ -6,7 +6,32 @@ jobs:
   check_dependabot:
     runs-on: ubuntu-latest
     steps:
-      - env:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Set up GitHub CLI
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.8'
+      
+      - name: Fetch Dependabot alerts
+        env:
           GH_TOKEN: ${{ secrets.TB_PAT }}
         run: |
-          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/tblanarik/dependabot-demo/dependabot/alerts
+          alerts=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/tblanarik/dependabot-demo/dependabot/alerts)
+          echo "$alerts" > alerts.json
+      
+      - name: Create issues for each alert
+        env:
+          GH_TOKEN: ${{ secrets.TB_PAT }}
+        run: |
+          jq -c '.[]' alerts.json | while read -r alert; do
+            package_name=$(echo $alert | jq -r '.securityVulnerability.package.name')
+            vulnerable_version=$(echo $alert | jq -r '.securityVulnerability.vulnerableVersionRange')
+            recommendation=$(echo $alert | jq -r '.securityVulnerability.advisory.summary')
+            
+            issue_title="Dependabot Alert for $package_name"
+            issue_body="There's a vulnerability in $package_name version $vulnerable_version. Recommendation: $recommendation"
+            
+            gh issue create --title "$issue_title" --body "$issue_body"
+          done
