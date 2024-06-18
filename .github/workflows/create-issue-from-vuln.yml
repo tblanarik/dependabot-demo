@@ -22,6 +22,6 @@ jobs:
             url=$(echo $alert | jq -r '.url')
 
             issue_title="[$severity] $summary"
-            issue_body="Dependabot Vulnerability Alert.\n\n$description\n\n$url"
+            issue_body="#Dependabot Vulnerability Alert\n\n##Description\n$description\n\n$url"
             echo -e "$issue_body" | gh issue create --title "$issue_title" --body-file -
           done
